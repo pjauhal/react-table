@@ -50,7 +50,7 @@ export const GlobalFilter = ({
       </div>
       <InputBase
         placeholder="Search…"
-        value={value}
+        //value={value}
         onChange={(e) => {
           setValue(e.target.value)
           onChange(e.target.value)

@@ -23,39 +23,33 @@ import { matchSorter } from 'match-sorter'
 
 function Table({ columns, data, updateMyData, skipPageReset, options }) {
 
+  const globalFilter = useCallback(
+    (rows, ids, query) => {
+        return matchSorter(rows, query, {keys: ['values.field', 'values.value.name']});
+    }
+  )
+
   const {
     getTableProps,
     headerGroups,
     state,
     prepareRow,
-    // @ts-ignore
     page,
-    // canPreviousPage,
-    // canNextPage,
-    // pageOptions,
-    // pageCount,
-    // @ts-ignore
     gotoPage,
-    // nextPage,
-    // previousPage,
-    // @ts-ignore
     setPageSize,
-    // @ts-ignore
     preGlobalFilteredRows,
-    // @ts-ignore
     setGlobalFilter,
-    // @ts-ignore
     state: { pageIndex, pageSize },
   } = useTable(
     {
       columns,
       data,
-      // @ts-ignore
       autoResetFilters: false,
       autoResetGlobalFilter: false,
       autoResetPage: !skipPageReset,
       updateMyData,
-      options
+      options,
+      globalFilter:globalFilter
     },
     useGlobalFilter, // useGlobalFilter!
     usePagination,
@@ -69,18 +63,6 @@ function Table({ columns, data, updateMyData, skipPageReset, options }) {
   const handleChangeRowsPerPage = (event) => {
     setPageSize(Number(event.target.value))
   }
-
-//   const globalFilter = useCallback(
-//     (rows, ids, query) => {
-//         // return matchSorter(rows, query, {
-//         //     keys: filters.map((columnName) => `values.${columnName}`),
-//         // });
-//         return matchSorter(rows, query, {
-//             keys: filters.map((columnName) => `values.${columnName}`),
-//         });
-//     },
-//     [state.globalFilter],
-// );
 
 
   return (
