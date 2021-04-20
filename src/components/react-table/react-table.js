@@ -6,9 +6,8 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import { useTable, useGlobalFilter, usePagination } from 'react-table'
+import { useTable, useGlobalFilter, usePagination, useSortBy } from 'react-table'
 import {
-  AppBar,
   TableContainer,
   TableFooter,
   TablePagination,
@@ -52,6 +51,7 @@ function Table({ columns, data, updateMyData, skipPageReset, options }) {
       globalFilter:globalFilter
     },
     useGlobalFilter, // useGlobalFilter!
+    useSortBy,
     usePagination,
   )
 
@@ -80,8 +80,15 @@ function Table({ columns, data, updateMyData, skipPageReset, options }) {
             {headerGroups.map((headerGroup) => (
               <TableRow {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
-                  <TableCell {...column.getHeaderProps()}>
+                  <TableCell {...column.getHeaderProps(column.getSortByToggleProps())}>
                     {column.render('Header')}
+                    <span>
+                    {column.isSorted
+                      ? column.isSortedDesc
+                        ? ' 🔽'
+                        : ' 🔼'
+                      : ''}
+                  </span>
                   </TableCell>
                 ))}
               </TableRow>
@@ -137,12 +144,17 @@ export const App = ({urlToChange}) => {
     () => [
       {
         Header: 'Field',
-        accessor: 'field',
+        accessor: 'field'
       },
       {
         Header: 'Value',
         accessor: 'value',
-        Cell: (options) => EditableCell(options, urlToChange)
+        Cell: (options) => EditableCell(options, urlToChange),
+        sortType: (rowA, rowB, id, desc) => {
+          if (rowA.original[id].name > rowB.original[id].name) return 1; 
+          if (rowB.original[id].name > rowA.original[id].name) return -1;
+           return 0;
+        }
       },
     ],
     [],
